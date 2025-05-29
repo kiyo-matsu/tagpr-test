@@ -10,7 +10,7 @@ permissions:
   contents: write
   pull-requests: write
   packages: write
-  issues: read
+  issues: write
 
 jobs:
   tagpr:
@@ -33,7 +33,7 @@ jobs:
             # これにより、依存関係が互換性のある最新バージョンに更新され、
             # Cargo.lockがそれに応じて更新されます。
             echo "Updating Cargo.lock..."
-            cargo update
+            cargo check
 
             # 更新されたCargo.lockをステージングします。
             # tagprはこの変更をリリース用のコミットに含めます。
