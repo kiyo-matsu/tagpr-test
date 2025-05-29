@@ -4,3 +4,4 @@
   release = true
   changelog = true
   versionFile = Cargo.toml
+  command = "cargo check && git add Cargo.lock"
