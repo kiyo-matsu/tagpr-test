@@ -1,0 +1,53 @@
+# .github/workflows/tagpr.yml
+name: tagpr
+
+on:
+  push:
+    branches: ["main"]
+
+# このワークフロー自体に必要な権限
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+  issues: read
+
+jobs:
+  tagpr:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tagpr.outputs.tag }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install stable
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt,clippy
+          rustup default stable
+      - name: Run tagpr
+        id: tagpr
+        uses: Songmu/tagpr@35daec35e8e3172806c763d8f196e6434fd44fbd # v1.5.2
+        with:
+          # tagprがタグを作成する前に実行するコマンド
+          command: |
+            # Cargo.tomlに基づいてCargo.lockを更新します。
+            # これにより、依存関係が互換性のある最新バージョンに更新され、
+            # Cargo.lockがそれに応じて更新されます。
+            echo "Updating Cargo.lock..."
+            cargo update
+
+            # 更新されたCargo.lockをステージングします。
+            # tagprはこの変更をリリース用のコミットに含めます。
+            # git status --porcelain | grep "Cargo.lock" のようにして変更があったか確認することも可能です。
+            echo "Staging Cargo.lock..."
+            git add Cargo.lock
+
+            # (オプション) Cargo.lockが更新されたかどうかを確認し、ログに出力
+            if git diff --staged --quiet --exit-code Cargo.lock; then
+              echo "Cargo.lock was not updated or no changes to stage."
+            else
+              echo "Cargo.lock has been updated and staged."
+            fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
