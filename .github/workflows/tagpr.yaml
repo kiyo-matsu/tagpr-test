@@ -25,7 +25,7 @@ jobs:
           rustup default stable
       - name: Run tagpr
         id: tagpr
-        uses: Songmu/tagpr@35daec35e8e3172806c763d8f196e6434fd44fbd # v1.5.2
+        uses: Songmu/tagpr@v1.7.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
