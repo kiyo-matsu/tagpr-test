@@ -4,4 +4,4 @@
   release = true
   changelog = true
   versionFile = Cargo.toml
-  postVersionCcommand = "cargo check && git add Cargo.lock"
+  postVersionCommand = "cargo check && git add Cargo.lock"
